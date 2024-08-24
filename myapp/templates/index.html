@@ -1,0 +1,532 @@
+{% extends base %}
+
+{% block preamble %}
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"> <!-- Roboto Font -->
+
+<!-- Compiled and minified JavaScript -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<style>
+    body {
+        font-family: 'Roboto', sans-serif; 
+        background-color: #f3f5ff;  /* Main background color set to light indigo accent */
+        display: flex; 
+        flex-direction: column; 
+        min-height: 100vh; 
+        margin: 0;
+    }
+
+    header, footer {
+        flex-shrink: 0; 
+        background-color: #ffffff !important;  /* Making header and footer white */
+    }
+
+    header nav {
+    background-color: #ffffff !important; 
+    }
+
+    main.flex-container {
+        flex: 1; 
+        display: flex; 
+        padding: 20px;
+        gap: 3px; 
+    }
+
+    .left-col, .right-col, .middle-col {
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .left-col {
+        width: 220px; 
+    }
+
+    .middle-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .right-col {
+        width: 200px;
+    }
+
+    .indigo-text {
+        color: #20222a;
+    }
+
+  .contact-info {
+    color: lightgrey;
+    font-size: 10px;
+    margin: 0; /* Removes any default margins */
+}
+.separator {
+            width: 90%;
+            height: 1px;
+            background-color: lightgrey;
+            margin: 20px auto;
+        }
+        .slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+#bokeh-slider-container {
+    display: none;
+}
+
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;  /* Ensure container takes full width */
+}
+
+/* Adjusting width of the slider */
+.range-field {
+    width: 20%;
+    display: flex;
+    justify-content: space-between; /* This spaces out the previous, slider, and current elements */
+    align-items: center;
+    position: relative; /* So that absolutely positioned child elements are positioned relative to this container */
+    margin: 5px 0;     /* Provide vertical spacing */
+}
+
+.slider {
+    margin: 0 50px;    /* Provide horizontal spacing to move the slider inward, making space for the "previous" and "current" text */
+}
+
+
+.slider .thumb {
+    margin-top: -7.5px;
+    z-index: 2;
+}
+
+.slider {
+    position: absolute; /* Will position the slider correctly within the range-field */
+    width: 100%; /* Matches the width of the range-field */
+    height: auto; /* Will ensure it doesn't stretch out too much */
+    z-index: 1;   /* Makes sure the slider appears below the text */
+    margin: 0 25px;
+}
+
+.slider .track {
+    background-color: #ddd;
+}
+
+.text-grow {
+    transform: scale(1.1);
+    transition: transform 0.3s;
+}
+
+#slider-status {
+    display: inline-block;
+
+}
+
+@keyframes slideFadeOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-10px); /* Adjust as desired */
+        opacity: 0;
+    }
+}
+
+@keyframes slideFadeIn {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.text-slide-fade-out {
+    animation: slideFadeOut 0.2s forwards; 
+}
+
+.text-slide-fade-in {
+    animation: slideFadeIn 0.2s forwards; 
+}
+
+
+
+.range-text {
+    width: 35%;  
+    display: flex;
+    justify-content: space-between; 
+    margin-top: 1px; 
+}
+
+/* New CSS for the Settings Panel */
+.settings-icon {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #3949ab;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1100; /* Ensure the settings icon is on top */
+}
+
+.settings-icon i {
+    color: white;
+    font-size: 24px;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    left: -350px; /* Specify unit */
+    width: 350px; /* Specify unit */
+    height: 100%;
+    background-color: #e8ebff;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1200; /* Ensure the side panel is on top of other elements */
+}
+
+.side-panel.open {
+    left: 0;
+}
+
+.tabs .tab a {
+    color: #3949ab;
+}
+
+.tabs .tab a.active {
+    color: #d32f2f;
+}
+
+.tabs .indicator {
+    background-color: #3949ab;
+}
+
+</style>
+
+{% endblock %}
+
+{% block contents %}
+<header>
+<nav class="z-depth-custom">
+    <div class="nav-wrapper" >
+    <a href="#" class="brand-logo center indigo-text">Grasshopper Code Comparator</a>
+    </div>
+</nav>
+</header>
+
+<main class="flex-container">
+  <div class="left-col" style="padding:5px">
+    <div style="font-size: 17px; font-weight: bold; color: rgb(75, 75, 75); margin-bottom: 6px; text-align: center;"> Document Stats </div>
+
+    <hr style="width: 90%; margin: 10px 0; border: 0; border-top: 1px solid lightgrey;">
+
+    <!-- Computation Time Content -->
+    <div style="display: flex; flex-direction: column; align-items: center; width: 200; padding: 8px; border: 0px solid #ccc; border-radius: 1px;">
+        <div style="font-size: 15px; margin-bottom: 2px; text-align: center;">Computation Time</div>
+        <div style="display: flex; justify-content: space-between; width: 90%; margin-bottom: 0px;">
+            <div style="font-size: 18px; font-weight: bold; text-align: center;">{{ embed(roots.Computation_Time_current_value) }}</div>
+            <div style="font-size: 18px; font-weight: bold; text-align: center;">{{ embed(roots.Computation_Time_previous_value) }}</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; width: 90%; text-align: center;">
+            <div style="font-size: 11px; color: #888; margin-top: 0px;">current</div>
+            <div style="font-size: 11px; color: #888; margin-top: 0px;">previous</div>
+        </div>
+        <!-- Division line -->
+        <div style="width: 60%; height: 1px; background-color: lightgrey; margin: 5px 0;"></div>
+        <div>
+          {{ embed(roots.rank_value_plot) }}
+        </div>
+    </div>
+    <hr style="width: 90%; margin: 10px 0; border: 0; border-top: 1px solid lightgrey;">
+    <!-- Component Count Content -->
+    <div style="display: flex; flex-direction: column; align-items: center; width: 200; padding: 8px; border: 0px solid #ccc; border-radius: 1px;">
+        <div style="font-size: 15px; margin-bottom: 2px; text-align: center;">Component Count</div>
+        <div style="display: flex; justify-content: space-between; width: 90%; margin-bottom: 0px;">
+            <div style="font-size: 18px; font-weight: bold; text-align: center;">{{ embed(roots.Component_Count_current_value) }}</div>
+            <div style="font-size: 18px; font-weight: bold; text-align: center;">{{ embed(roots.Component_Count_previous_value) }}</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; width: 90%; text-align: center;">
+            <div style="font-size: 11px; color: #888; margin-top: 0px;">current</div>
+            <div style="font-size: 11px; color: #888; margin-top: 0px;">previous</div>
+        </div>
+    </div>
+    <hr style="width: 90%; margin: 10px 0; border: 0; border-top: 1px solid lightgrey;">
+    <!-- Start Points Content -->
+    <div style="display: flex; flex-direction: column; align-items: center; width: 200; padding: 8px; border: 0px solid #ccc; border-radius: 0px;">
+        <div style="font-size: 15px; margin-bottom: 2px; text-align: center;">Start Points</div>
+        <div style="display: flex; justify-content: space-between; width: 90%; margin-bottom: 0px;">
+            <div style="font-size: 18px; font-weight: bold; text-align: center;">{{ embed(roots.Start_Points_current_value) }}</div>
+            <div style="font-size: 18px; font-weight: bold; text-align: center;">{{ embed(roots.Start_Points_previous_value) }}</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; width: 90%; text-align: center;">
+            <div style="font-size: 11px; color: #888; margin-top: 0px;">current</div>
+            <div style="font-size: 11px; color: #888; margin-top: 0px;">previous</div>
+        </div>
+    </div>
+    <hr style="width: 90%; margin: 10px 0; border: 0; border-top: 1px solid lightgrey;">
+
+    <!-- End Points Content -->
+    <div style="display: flex; flex-direction: column; align-items: center; width: 200; padding: 8px; border: 0px solid #ccc; border-radius: 1px;">
+        <div style="font-size: 15px; margin-bottom: 2px; text-align: center;">End Points</div>
+        <div style="display: flex; justify-content: space-between; width: 90%; margin-bottom: 0px;">
+            <div style="font-size: 18px; font-weight: bold; text-align: center;">{{ embed(roots.End_Points_current_value) }}</div>
+            <div style="font-size: 18px; font-weight: bold; text-align: center;">{{ embed(roots.End_Points_previous_value) }}</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; width: 90%; text-align: center;">
+            <div style="font-size: 11px; color: #888; margin-top: 0px;">current</div>
+            <div style="font-size: 11px; color: #888; margin-top: 0px;">previous</div>
+        </div>
+    </div>
+    <hr style="width: 90%; margin: 10px 0; border: 0; border-top: 1px solid lightgrey;">
+
+      <!-- End Points Content -->
+      <div style="display: flex; flex-direction: column; align-items: center; width: 200; padding: 8px; border: 0px solid #ccc; border-radius: 8px;">
+        
+        <div style="font-size: 15px; margin-bottom: 2px; text-align: center;">Change Stats (%)</div>
+        <div>{{ embed(roots.bar_chart) }}</div>
+    </div>
+
+
+
+</div>
+
+
+<div class="middle-col" style="padding:5px">
+    <!-- Middle Column Content -->
+    <ul class="tabs z-depth-custom">
+    <li class="tab col s6"><a href="#compare-view" class="indigo-text">Split View</a></li>
+    <li class="tab col s6"><a href="#morph-view" class="indigo-text">Morph View</a></li>
+    </ul>
+    <div id="compare-view" class="z-depth-custom">
+    <!-- Compare View Content Here -->
+        {{ embed(roots.split_view_layout) }}
+    </div>
+    <div id="morph-view" class="z-depth-custom">
+        <div class="slider-container">
+            <p id="slider-status" style="text-align: center;">previous graph</p>
+            
+            <div class="range-field">
+                <div class="slider">
+                    <input type="range" id="materialize-slider" min="0" max="30" step="1" value="0" />
+                </div>
+               
+            </div>
+        </div>
+    <div class="z-depth-custom">
+    <!-- Morph View Content Here -->
+    {{ embed(roots.morphViewLayout) }}
+    </div>
+    </div>
+
+
+    <div id="bokeh-slider-container">
+        {{ embed(roots.morph_slider_layout) }}
+    </div>
+    
+
+
+
+    
+    
+    
+</div>
+
+<div class="right-col" style="padding:5px">
+    <!-- Right Column Content -->
+    <div style="font-size: 17px; font-weight: bold; color: rgb(75, 75, 75); margin-bottom: 6px; text-align: center;"> Selection Tools </div>
+    <hr style="width: 90%; margin: 10px 0; border: 0; border-top: 1px solid lightgrey;">
+    <div>{{ embed(roots.graph_selection_widgest) }}</div>
+    <hr style="width: 90%; margin: 10px 0; border: 0; border-top: 1px solid lightgrey;">
+    <div>{{ embed(roots.fetch_push_selected_layout) }}</div>
+</div>
+
+<!-- New settings icon and side panel for Speckle and JSON inputs -->
+<div class="settings-icon" id="settings-icon">
+    <i class="material-icons">settings</i>
+</div>
+
+<div class="side-panel" id="side-panel">
+    <div class="intro-text" style="font-size: 10px; color: #555; margin-bottom: 20px; line-height: 1.4; text-align: center; max-width: 300px; margin-left: auto; margin-right: auto;">
+        Choose your data source: either connect to Speckle or upload two JSON files. When using Speckle, if commit IDs are not provided, the latest commit and the one immediately preceding it from the same branch will be fetched automatically.
+    </div>
+    
+    <ul class="tabs">
+        <li class="tab col s6"><a href="#speckle-tab" class="active">SPECKLE</a></li>
+        <li class="tab col s6"><a href="#json-tab">JSON</a></li>
+    </ul>
+
+    <div id="speckle-tab" class="col s12">
+        {{ embed(roots.speckle_layout) }}
+    </div>
+
+    <div id="json-tab" class="col s12">
+        {{ embed(roots.json_layout) }}
+    </div>
+
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid lightgrey;">
+
+    <div style="padding-top: 10px;">
+        <div style="font-weight: bold;">UUID Syncing (Optional)</div>
+        <div class="intro-text" style="font-size: 10px; color: #555; margin-bottom: 20px; line-height: 1.4; text-align: center; max-width: 300px; margin-left: auto; margin-right: auto;">
+            Optionally you can provide a speckle stream and branch where the UUIDS of selected nodes are pushed to and pulled from. This allows to sync selection of nodes/components from this dashboard to an open grasshopper document and the other way round.
+        </div>
+        {{ embed(roots.uuid_sync_layout) }}
+    </div>
+</div>
+</main>
+
+<footer class="page-footer z-depth-custom">
+  <div class="container">
+      <div class="row">
+          <div class="col l6 s12"  style=" align-items: center">
+              <p class="contact-info">Contact: ser.due@me.com</p>
+          </div>
+      </div>
+  </div>
+</footer>
+
+<!-- JavaScript to Initialize Materialize Components -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Materialize tabs
+        var elems = document.querySelectorAll('.tabs');
+        var instances = M.Tabs.init(elems);
+    
+        // Animation for slider status
+        const slider = document.getElementById('materialize-slider');
+        const status = document.getElementById('slider-status');
+        let currentStatus = ""; 
+    
+        slider.addEventListener('input', function() {
+            let newStatus = "";
+            const value = parseInt(slider.value);
+            if (value === 0) {
+                newStatus = 'previous graph';
+            } else if (value <= 10) {
+                newStatus = 'highlighting changes';
+            } else if (value <= 20) {
+                newStatus = 'morphing to new positions';
+            } else if (value <= 29) {
+                newStatus = 'transition to current graph';
+            } else if (value === 30) {
+                newStatus = 'current graph';
+            }
+    
+            if (currentStatus !== newStatus) {
+                // Fade out the old status
+                status.classList.add('text-slide-fade-out');
+    
+                // After the fade out completes, update the text and fade it in
+                setTimeout(() => {
+                    status.textContent = newStatus;
+                    currentStatus = newStatus; // Update the currentStatus to newStatus
+    
+                    // Reset status styles for fade-in
+                    status.style.opacity = 0; 
+                    status.style.transform = "translateY(10px)";
+    
+                    // Remove the fade-out class and add the fade-in class
+                    status.classList.remove('text-slide-fade-out');
+                    status.classList.add('text-slide-fade-in');
+    
+                    // Once the fade-in completes, reset styles and class for future changes
+                    setTimeout(() => {
+                        status.style.opacity = 1; // reset opacity
+                        status.style.transform = "translateY(0)"; // reset position
+                        status.classList.remove('text-slide-fade-in');
+                    }, 100);
+                }, 100);
+            }
+        });
+    
+        // Sync Materialize slider with Bokeh slider
+        setTimeout(function() {
+            const materializeSlider = document.getElementById('materialize-slider');
+            
+            // First, check if Bokeh and Bokeh.documents are defined and that there is a document to access.
+            if (Bokeh && Bokeh.documents && Bokeh.documents[0]) {
+                const bokehDoc = Bokeh.documents[0];
+                var bokehSlider = bokehDoc.get_model_by_name('morph_slider_layout');
+    
+                if (bokehSlider) {
+                    bokehSlider.value = parseFloat(materializeSlider.value);
+                } else {
+                    console.error("Bokeh slider not found.");
+                }
+            } else {
+                console.error("Bokeh documents not detected or not accessible.");
+            }
+        }, 2000);
+    
+        // Function to sync the Bokeh slider's value with the Materialize slider
+        function syncSliders() {
+            const materializeSlider = document.getElementById('materialize-slider');
+    
+            if (Bokeh && Bokeh.documents && Bokeh.documents[0]) {
+                const bokehDoc = Bokeh.documents[0];
+                var bokehSlider = bokehDoc.get_model_by_name('morph_slider_layout');
+    
+                if (bokehSlider) {
+                    bokehSlider.value = parseFloat(materializeSlider.value);
+                } else {
+                    console.error("Bokeh slider not found.");
+                }
+            } else {
+                console.error("Bokeh documents not detected or not accessible.");
+            }
+        }
+    
+        // Set up the event listener to sync the sliders whenever the Materialize slider changes
+        document.getElementById('materialize-slider').addEventListener('input', syncSliders);
+    
+        // Toggle the side panel on settings icon click
+        const settingsIcon = document.getElementById('settings-icon');
+        const sidePanel = document.getElementById('side-panel');
+    
+        // Initially hide the side panel
+        sidePanel.classList.remove('open');
+
+        // Handle click to toggle the side panel
+        settingsIcon.addEventListener('click', function(event) {
+            event.stopPropagation();
+            sidePanel.classList.toggle('open');
+        });
+    
+        // Close the side panel when clicking outside of it
+        document.addEventListener('click', function(event) {
+            if (!sidePanel.contains(event.target) && !settingsIcon.contains(event.target)) {
+                sidePanel.classList.remove('open');
+            }
+        });
+
+        // Prevent clicks inside the panel from closing it
+        sidePanel.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    });
+</script>
+
+
+    
+
+
+{% endblock %}
