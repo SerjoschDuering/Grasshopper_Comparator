@@ -1,3 +1,4 @@
 bokeh==2.4.3
 networkx==2.8.4
 specklepy==2.13.1
+numpy==1.23.5
