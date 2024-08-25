@@ -1,7 +1,10 @@
 
 # Grasshopper Code Comparator
 
+
 **Grasshopper Code Comparator** is a web-based visualization tool designed to compare different versions of Grasshopper definitions. This tool allows users to visually analyze changes, additions, and deletions between two versions of their Grasshopper scripts through interactive graphical representations. Users can either upload JSON files generated from Grasshopper or synchronize data directly using Speckle.
+> ⚠️ **---, ---!** ⚠️  
+> The app is also live [here](https://grasshoppercomparator.onrender.com/myapp)! Check it out!
 
 ![Morphing View](myapp/docs/morpher.gif)
 
