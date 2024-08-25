@@ -25,6 +25,9 @@ from specklepy.api.client import SpeckleClient
 from specklepy.transports.server import ServerTransport
 
 
+# Global state variable to track data source mode
+global data_source_mode
+data_source_mode = "speckle"  # default to speckle
 
 def robust_json_decode(encoded_str):
     """
@@ -142,11 +145,6 @@ def getSpeckleStream(stream_id,
 
 
 
-# Global state variable to track data source mode
-global data_source_mode
-data_source_mode = "speckle"  # default to speckle
-
-
 def update_graph_data():
     """
     Function to update all charts dynamically by fetching new data and updating ColumnDataSources and Divs.
@@ -205,6 +203,10 @@ def update_graph_data():
 
     # 2. PROCESS AND UPDATE THE GRAPHS ------------------------------------------------
     # Generate NetworkX graphs
+    global cur_graphX
+    global prev_graphX
+    global cur_graphX_reverse
+    global prev_graphX_reverse
     cur_graphX, cur_graphX_reverse = generateGraph(current_graph)
     prev_graphX, prev_graphX_reverse = generateGraph(previous_graph)
 
@@ -385,12 +387,7 @@ def get_gh_graph(streamID, branchName, client, commitID=0):
 
     # get gh graph data 
     res_new = copy.deepcopy(res)
-    main_graph_new = res_new["@main_graph"]["@{0}"][0]["@main_graph"]#.replace("'", '"')
-    #cluster_graph_new = res_new["@cluster_graph"]["@{0}"][0]#.replace("'", '"')
-
-
-    #start, end = 30368 - 50, 30368 + 50
-    #highlighted_content = main_graph_new[start:30368] + "\033[1;31m" + main_graph_new[30368] + "\033[0m" + main_graph_new[30368+1:end]
+    main_graph_new = res_new["@main_graph"]["@{0}"][0]["@main_graph"]
 
 
     main_graph_json = json.loads(main_graph_new)
@@ -530,9 +527,7 @@ def graph2CDS(G, attributes_to_include, added=None, removed=None, changed=None):
 
     for i, node in enumerate(nodes):
         node_id = node[0]
-       
         change_list = []
-
         if added and node_id in added:
             node_data['node_status'][i] = 'added'
             change_list.append("<div style='font-weight: bold; padding: 5px;'>Added</div>")
@@ -627,6 +622,10 @@ def node_comparison(old_graph, new_graph, attributes_to_track):
 
 
 # generate networkX graphs
+global cur_graphX
+global prev_graphX
+global cur_graphX_reverse
+global prev_graphX_reverse
 cur_graphX, cur_graphX_reverse = generateGraph(current_graph)
 prev_graphX, prev_graphX_reverse  = generateGraph(previous_graph)
 
@@ -2211,15 +2210,22 @@ def update_highlighted_edges(source_from, source_to, G, G_reversed, depth_upstre
     highlighted_edges_source.data = dict(xs=xs, ys=ys, color=colors)
 
 def callback_current_edges(attr, old, new):
+    global cur_graphX
+    global prev_graphX
+    global cur_graphX_reverse
+    global prev_graphX_reverse
     selected_uuids = [node_source_current.data['instanceGuid'][i] for i in new]
     target_indices = [i for i, guid in enumerate(node_source_previous.data['instanceGuid']) if guid in selected_uuids]
     node_source_previous.selected.indices = target_indices
-
     update_highlighted_edges(node_source_current, node_source_previous, cur_graphX, 
                              cur_graphX_reverse, slider_upstream.value, slider_downstream.value, 
                              highlighted_edges_source_current, "current")
 
 def callback_previous_edges(attr, old, new):
+    global cur_graphX
+    global prev_graphX
+    global cur_graphX_reverse
+    global prev_graphX_reverse
     selected_uuids = [node_source_previous.data['instanceGuid'][i] for i in new]
     target_indices = [i for i, guid in enumerate(node_source_current.data['instanceGuid']) if guid in selected_uuids]
     node_source_current.selected.indices = target_indices
@@ -2229,6 +2235,10 @@ def callback_previous_edges(attr, old, new):
                              highlighted_edges_source_previous, "previous")
 
 def on_slider_change(attr, old, new):
+    global cur_graphX
+    global prev_graphX
+    global cur_graphX_reverse
+    global prev_graphX_reverse
     update_highlighted_edges(node_source_current, node_source_previous, cur_graphX, 
                              cur_graphX_reverse, slider_upstream.value, slider_downstream.value, 
                              highlighted_edges_source_current, "current")
