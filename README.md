@@ -3,7 +3,7 @@
 
 **Grasshopper Code Comparator** is a web-based visualization tool designed to compare different versions of Grasshopper definitions. This tool allows users to visually analyze changes, additions, and deletions between two versions of their Grasshopper scripts through interactive graphical representations. Users can either upload JSON files generated from Grasshopper or synchronize data directly using Speckle.
 
-![Morphing View](docs/morpher.gif)
+![Morphing View](myapp/docs/morpher.gif)
 
 *In the morph view, you can smoothly transition back and forth between two versions of Grasshopper definitions, visually highlighting changes.*
 
@@ -19,7 +19,7 @@
 
 - **Interactive Graph Visualization**: Provides a detailed visualization of Grasshopper definitions, including node attributes, edges, and changes. Supports interactive selection, filtering, and zooming.
 
-![GH Comparator](docs/gh_coperator.gif)
+![GH Comparator](myapp/docs/gh_coperator.gif)
 
 ## Getting Started
 
@@ -71,19 +71,19 @@
 
 #### 1. Side-by-Side Comparison
 
-![Side-by-Side View](docs/SplitView.jpeg)
+![Side-by-Side View](myapp/docs/SplitView.jpeg)
 
 The split view mode highlights differences between the current and previous Grasshopper definitions, categorizing them as added, removed, changed, or unchanged.
 
 #### 2. Morphing View
 
-![Morphing View](docs/morpher.gif)
+![Morphing View](myapp/docs/morpher.gif)
 
 Morphing view facilitates a smooth transition between different versions, making it easier to observe the evolution of the Grasshopper definition.
 
 #### 3. Settings Panel
 
-![Settings Panel](docs/Tools.jpeg)
+![Settings Panel](myapp/docs/Tools.jpeg)
 
 The settings panel allows you to configure your data source, either by uploading JSON files or synchronizing through Speckle. Additionally, the left panel provides tools to select upstream and downstream components/nodes, trigger syncing selected UUIDs to Speckle, or fetch from Speckle.
 
