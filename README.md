@@ -14,6 +14,7 @@
 > This project began as a quick afternoon experiment and has evolved into a single-file implementation with over 2000 lines of code. While it shows great potential, please note that it's still a work in progress. I had plans to refine and expand it further, but I haven't yet found the time to do so.
 
 ## Features
+> ⚠️  Unfortunatly Cluster Contents are not supported yet (I had it implemented once, but the file got currupted and was lost)
 
 - **Side-by-Side Comparison**: Visualize both the current and previous versions of a Grasshopper definition simultaneously, highlighting added, removed, changed, and unchanged components.
 
@@ -48,13 +49,13 @@
    ```bash
    pip install -r requirements.txt
    ```
+3. **Install Speckle Connector for Grasshopper**: 
+requied if you want to use speckle related features
 
 ### Usage
 
-1. **Generate JSON Files**:
-   - Utilize the Grasshopper snippet provided in the repository (found in the `Grasshopper` folder) to generate JSON files representing your Grasshopper definitions.
 
-2. **Run the Application**:
+1. **Run the Application**:
    - Start the Bokeh server to launch the web application:
    Open a terminal, navigate to the project directory (one level before "myapp") and enter the command:
 
@@ -62,17 +63,20 @@
    bokeh serve myapp
    ```
 
-3. **Uploading or Syncing Data**:
+2. **Uploading or Syncing Data**:
    - In the web interface, you have two options:
      - **Upload JSON Files**: Manually upload JSON files for both the current and previous versions of the Grasshopper definition.
      - **Sync with Speckle**: Enter your Speckle credentials to fetch data directly from your Speckle streams.
 
-4. **Visual Comparison**:
+3. **Visual Comparison**:
    - **Split View**: Displays the current and previous versions side by side, allowing for direct comparison of changes, additions, and removals.
    - **Morph View**: Provides a morphing transition between the versions, helping to visualize modifications over time.
 
-5. **UUID Syncing (Optional)**:
+4. **UUID Syncing (Optional)**:
    - Use the UUID Syncing feature to sync selected nodes or components between Grasshopper and the web interface. This feature helps in maintaining consistency and synchronizing changes dynamically.
+
+5. **Use your own Data**:
+- **add the grasshopper snippet to your definition**: Download the "grasshopperSnippet.gh" file, in there you find the snippet that generates a graph/Json representation of the definition. By default its saved to the same filepath as the definition, alternativly you can sync it to speckle. There are also snippets to receive and auto-select nodes/components that were slected on the dashboard/webapp and vice versa.
 
 ### Screenshots
 
@@ -94,6 +98,11 @@ Morphing view facilitates a smooth transition between different versions, making
 You can open the left side panel by clicking the settings icon on the buttom left.
 The settings panel allows you to configure your data source, either by uploading JSON files or synchronizing through Speckle. Optionally, you can provide a speckle stream ID and branch name that is used to sync IDs of selected nodes/compomnents. Additionally, the left panel provides tools to select upstream and downstream components/nodes, trigger syncing selected UUIDs to Speckle, or fetch from Speckle.
 
+#### 4. Grasshopper Snippets
+![Grasshopper Snippets](myapp/docs/GH.png)
+
+The GrasshopperSnippets.gh file provides components for generating a detailed dictionary of a Grasshopper definition, converting it to JSON, and optionally sending it to Speckle for synchronization with the dashboard. It also allows syncing of selected component UUIDs between Grasshopper and the Grasshopper Code Comparator dashboard.
+
 ### Notes
 
 - **Data Handling**: This tool currently does not maintain a persistent storage or database for data management. All data operations are performed locally or via live syncing with Speckle during a session.
@@ -106,3 +115,5 @@ Contributions are welcome! Please submit a pull request or open an issue to disc
 ### License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+

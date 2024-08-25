@@ -23,6 +23,7 @@ from bokeh.transform import factor_cmap
 from specklepy.api import operations
 from specklepy.api.client import SpeckleClient
 from specklepy.transports.server import ServerTransport
+from specklepy.objects.base import Base
 
 
 # Global state variable to track data source mode
@@ -107,7 +108,6 @@ def getSpeckleStream(stream_id,
     It prints out the branch details and the creation dates of the last three commits for debugging purposes.
     """
 
-
     # set stream and branch
     try:
         branch = client.branch.get(stream_id, branch_name, 3)
@@ -115,6 +115,11 @@ def getSpeckleStream(stream_id,
     except:
         branch = client.branch.get(stream_id, branch_name, 1)
         print(branch)
+
+    # Check if there are any commits in the branch
+    if not branch.commits.items:
+        print(f"No commits found on branch {branch_name}.")
+        return {}  # Return an empty dictionary or handle as needed
 
     print("last three commits:")
     [print(ite.createdAt) for ite in branch.commits.items]
@@ -124,21 +129,20 @@ def getSpeckleStream(stream_id,
         choosen_commit_id = latest_commit.id
         commit = client.commit.get(stream_id, choosen_commit_id)
         print("latest commit ", branch.commits.items[0].createdAt, " was choosen")
-    elif type(commit_id) == type("s"): # string, commit uuid
+    elif type(commit_id) == type("s"):  # string, commit uuid
         choosen_commit_id = commit_id
         commit = client.commit.get(stream_id, choosen_commit_id)
         print("provided commit ", choosen_commit_id, " was choosen")
-    elif type(commit_id) == type(1): #int 
+    elif type(commit_id) == type(1):  # int 
         latest_commit = branch.commits.items[commit_id]
         choosen_commit_id = latest_commit.id
         commit = client.commit.get(stream_id, choosen_commit_id)
-
 
     print(commit)
     print(commit.referencedObject)
     # get transport
     transport = ServerTransport(client=client, stream_id=stream_id)
-    #speckle stream
+    # speckle stream
     res = operations.receive(commit.referencedObject, transport)
 
     return res
@@ -2038,6 +2042,11 @@ def getStream():
     # Fetch data from the specified stream and branch
     res = getSpeckleStream(uuid_sync_stream_id, uuid_sync_branch_name, client)
     
+    # If res is empty, return early
+    if not res:
+        print("No data found for the specified stream and branch.")
+        return None, None
+
     # Extract data
     uuid_data = res["@uuid_data"]["@{0}"][0]
     res_copy = copy.deepcopy(res)
@@ -2046,8 +2055,15 @@ def getStream():
 
 
 
-def updateStream(res_new, data_str):
-    """Update data on Speckle stream using user-provided inputs."""
+
+
+def updateStream(data_str):
+    """
+    Create and update data on Speckle stream using user-provided inputs.
+    
+    Args:
+        data_str (str): The data to be updated in the Speckle stream in string format.
+    """
     # Read the values from the widgets
     speckle_token = speckle_token_input.value.strip()
     uuid_sync_stream_id = uuid_sync_stream_id_input.value.strip()
@@ -2055,75 +2071,110 @@ def updateStream(res_new, data_str):
 
     # Check if all required inputs are provided
     if not speckle_token or not uuid_sync_stream_id or not uuid_sync_branch_name:
-        print("Speckle token, stream ID, and branch name are required to update data.")
+        print("Error: Speckle token, stream ID, and branch name are required to update data.")
         return
 
-    # Authenticate client with provided token
-    client = SpeckleClient(host="https://speckle.xyz")
-    client.authenticate(token=speckle_token)
+    try:
+        # Authenticate client with provided token
+        client = SpeckleClient(host="https://speckle.xyz")
+        client.authenticate(token=speckle_token)
 
-    # Update the stream data
-    res_new["@uuid_data"]["@{0}"][0] = data_str
-    commit_id = updateSpeckleStream(uuid_sync_stream_id, uuid_sync_branch_name, client, res_new)
-    print("Stream updated, commit id", commit_id)
+        # Create a new Base object and assign data
+        new_base_object = Base()
+        new_base_object["@uuid_data"] = {}
+        new_base_object["@uuid_data"]["@{0}"] = [data_str]
 
+        # Print for debugging
+        print("Base object created:", new_base_object)
+
+        # Update the stream with the new base object
+        commit_id = updateSpeckleStream(uuid_sync_stream_id, uuid_sync_branch_name, client, new_base_object)
+        print("Stream updated, commit id", commit_id)
+
+    except Exception as e:
+        print(f"Error during stream update: {e}")
 
 
 def process_data_to_indices(data, uuid_mapping):
-    """Convert a list of UUIDs to their corresponding indices in the graph."""
+    """
+    Convert a list of UUIDs to their corresponding indices in the graph.
+    
+    Args:
+        data (str): JSON string containing a list of UUIDs.
+        uuid_mapping (dict): Dictionary mapping UUIDs to graph indices.
+    
+    Returns:
+        list: List of indices corresponding to the UUIDs.
+    """
     try:
         data = data.replace("'", '"')
         uuid_list = json.loads(data)
         if isinstance(uuid_list, list):
             return [int(uuid_mapping[uuid]) for uuid in uuid_list if uuid in uuid_mapping and uuid != "no_id"]
-    except json.JSONDecodeError:
-        pass
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON data: {e}")
+    except Exception as e:
+        print(f"Unexpected error processing data to indices: {e}")
     return []
 
-update_from_button = False
 
-
-def on_button_click():
+def on_button_click_fetchids():
+    """
+    Callback function to fetch and process UUIDs when a button is clicked.
+    """
     speckle_ids, res_new = getStream()
-    
-    # For current graph
+
+    # Check if speckle_ids is None
+    if speckle_ids is None:
+        print("No Speckle IDs found.")
+        return
+
+    # Process UUIDs to indices for current and previous graphs
     indices_cur = process_data_to_indices(speckle_ids, uuid_mapping_cur)
-    
-    # For previous graph
     indices_prev = process_data_to_indices(speckle_ids, uuid_mapping_prev)
 
+    # Update the selected indices in the data sources
     node_source_current.selected.indices = indices_cur
     node_source_previous.selected.indices = indices_prev
 
 
-
-
 def on_selection_change_current(attr, old, new):
+    """
+    Callback function triggered when the selection changes in the current graph.
+    """
     selected_uuids = [node_source_current.data['instanceGuid'][i] for i in new]
-    speckle_id, res_new = getStream()
-    updateStream(res_new, str(selected_uuids))
+    _, res_new = getStream()
+    updateStream(str(selected_uuids))
+
 
 def on_selection_change_previous(attr, old, new):
+    """
+    Callback function triggered when the selection changes in the previous graph.
+    """
     selected_uuids = [node_source_previous.data['instanceGuid'][i] for i in new]
-    speckle_id, res_new = getStream()
-    updateStream(res_new, str(selected_uuids))
+    _, res_new = getStream()
+    updateStream(str(selected_uuids))
 
-# Define the function to push selected UUIDs
+
 def push_selected():
+    """
+    Push selected UUIDs to Speckle after combining selections from current and previous graphs.
+    """
     # Gather selected UUIDs from current source
     selected_uuids_cur = [node_source_current.data['instanceUUID'][i] for i in node_source_current.selected.indices]
 
     # Gather selected UUIDs from previous source
     selected_uuids_prev = [node_source_previous.data['instanceUUID'][i] for i in node_source_previous.selected.indices]
 
-    # Combine both lists
+    # Combine both lists and ensure uniqueness
     combined_selected_uuids = list(set(selected_uuids_cur + selected_uuids_prev))
 
-    # Fetch existing data (if you need to compare or merge)
+    # Fetch existing data (if needed)
     _, res_new = getStream()
 
-    # Update the stream
-    updateStream(res_new, str(combined_selected_uuids))
+    # Update the stream with combined UUIDs
+    updateStream(str(combined_selected_uuids))
+
 
 # Create the "Push Selected" button and attach the function
 button_push_selected = Button(label="Push Selected")
@@ -2132,7 +2183,7 @@ button_push_selected.on_click(push_selected)
 
 
 button_fetch = Button(label="Fetch Selected")
-button_fetch.on_click(on_button_click)
+button_fetch.on_click(on_button_click_fetchids)
 
 fetch_push_selected_layout = column(button_fetch, button_push_selected, sizing_mode="stretch_width", name="fetch_push_selected_layout")
 curdoc().add_root(fetch_push_selected_layout)
