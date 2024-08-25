@@ -3,10 +3,14 @@
 
 
 **Grasshopper Code Comparator** is a web-based visualization tool designed to compare different versions of Grasshopper definitions. This tool allows users to visually analyze changes, additions, and deletions between two versions of their Grasshopper scripts through interactive graphical representations. Users can either upload JSON files generated from Grasshopper or synchronize data directly using Speckle.
-> ⚠️ **---, ---!** ⚠️  
-> The app is also live [here](https://grasshoppercomparator.onrender.com/myapp)! Check it out!
+> ⚠️  
+> You can test the app [here](https://grasshoppercomparator.onrender.com/myapp)!
 
 ![Morphing View](myapp/docs/morpher.gif)
+
+> **Disclaimer:**  
+> This project began as a quick afternoon experiment and has evolved into a single-file implementation with over 2000 lines of code. While it shows great potential, please note that it's still a work in progress. I had plans to refine and expand it further, but I haven't yet found the time to do so.
+
 
 *In the morph view, you can smoothly transition back and forth between two versions of Grasshopper definitions, visually highlighting changes.*
 
