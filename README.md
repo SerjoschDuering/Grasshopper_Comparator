@@ -6,6 +6,8 @@
  
 > ⚠️  This repro is hosted on render.com. You can test the app [here](https://grasshoppercomparator.onrender.com/myapp)! ⚠️ 
 
+> ⚠️ Tutorial: [youtube](https://youtu.be/ae-oo2KoWWA)
+
 ![Morphing View](myapp/docs/morpher.gif)
 
 *In the morph view, you can smoothly transition back and forth between two versions of Grasshopper definitions, visually highlighting changes.*
