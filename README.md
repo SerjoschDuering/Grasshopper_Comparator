@@ -12,7 +12,7 @@
 
 *In the morph view, you can smoothly transition back and forth between two versions of Grasshopper definitions, visually highlighting changes.*
 
-> **Disclaimer:**  
+> **Note:**  
 > This project began as a quick afternoon experiment and has evolved into a single-file implementation with over 2000 lines of code. While it shows great potential, please note that it's still a work in progress. I had plans to refine and expand it further, but I haven't yet found the time to do so.
 
 ## Features
