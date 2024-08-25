@@ -50,6 +50,7 @@
 
 2. **Run the Application**:
    - Start the Bokeh server to launch the web application:
+   Open a terminal, navigate to the project directory (one level before "myapp") and enter the command:
 
    ```bash
    bokeh serve myapp.py
@@ -71,7 +72,7 @@
 
 #### 1. Side-by-Side Comparison
 
-![Side-by-Side View](myapp/docs/SplitView.jpeg)
+![Side-by-Side View](myapp/docs/SplitView.jpg)
 
 The split view mode highlights differences between the current and previous Grasshopper definitions, categorizing them as added, removed, changed, or unchanged.
 
@@ -83,9 +84,9 @@ Morphing view facilitates a smooth transition between different versions, making
 
 #### 3. Settings Panel
 
-![Settings Panel](myapp/docs/Tools.jpeg)
-
-The settings panel allows you to configure your data source, either by uploading JSON files or synchronizing through Speckle. Additionally, the left panel provides tools to select upstream and downstream components/nodes, trigger syncing selected UUIDs to Speckle, or fetch from Speckle.
+![Settings Panel](myapp/docs/Tools.jpg)
+You can open the left side panel by clicking the settings icon on the buttom left.
+The settings panel allows you to configure your data source, either by uploading JSON files or synchronizing through Speckle. Optionally, you can provide a speckle stream ID and branch name that is used to sync IDs of selected nodes/compomnents. Additionally, the left panel provides tools to select upstream and downstream components/nodes, trigger syncing selected UUIDs to Speckle, or fetch from Speckle.
 
 ### Notes
 
