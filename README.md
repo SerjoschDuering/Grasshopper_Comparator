@@ -1,6 +1,11 @@
+
 # Grasshopper Code Comparator
 
 **Grasshopper Code Comparator** is a web-based visualization tool designed to compare different versions of Grasshopper definitions. This tool allows users to visually analyze changes, additions, and deletions between two versions of their Grasshopper scripts through interactive graphical representations. Users can either upload JSON files generated from Grasshopper or synchronize data directly using Speckle.
+
+![Morphing View](docs/morpher.gif)
+
+*In the morph view, you can smoothly transition back and forth between two versions of Grasshopper definitions, visually highlighting changes.*
 
 ## Features
 
@@ -14,6 +19,8 @@
 
 - **Interactive Graph Visualization**: Provides a detailed visualization of Grasshopper definitions, including node attributes, edges, and changes. Supports interactive selection, filtering, and zooming.
 
+![GH Comparator](docs/gh_coperator.gif)
+
 ## Getting Started
 
 ### Prerequisites
@@ -25,16 +32,16 @@
 
 1. **Clone the Repository**:
 
-   \`\`\`bash
+   ```bash
    git clone https://github.com/yourusername/grasshopper-code-comparator.git
    cd grasshopper-code-comparator
-   \`\`\`
+   ```
 
 2. **Install Required Packages**:
 
-   \`\`\`bash
+   ```bash
    pip install -r requirements.txt
-   \`\`\`
+   ```
 
 ### Usage
 
@@ -44,9 +51,9 @@
 2. **Run the Application**:
    - Start the Bokeh server to launch the web application:
 
-   \`\`\`bash
+   ```bash
    bokeh serve myapp.py
-   \`\`\`
+   ```
 
 3. **Uploading or Syncing Data**:
    - In the web interface, you have two options:
@@ -64,21 +71,21 @@
 
 #### 1. Side-by-Side Comparison
 
-![Side-by-Side View](images/side_by_side.png)
+![Side-by-Side View](docs/SplitView.jpeg)
 
 The split view mode highlights differences between the current and previous Grasshopper definitions, categorizing them as added, removed, changed, or unchanged.
 
 #### 2. Morphing View
 
-![Morphing View](images/morph_view.png)
+![Morphing View](docs/morpher.gif)
 
 Morphing view facilitates a smooth transition between different versions, making it easier to observe the evolution of the Grasshopper definition.
 
 #### 3. Settings Panel
 
-![Settings Panel](images/settings_panel.png)
+![Settings Panel](docs/Tools.jpeg)
 
-The settings panel allows you to configure your data source, either by uploading JSON files or synchronizing through Speckle.
+The settings panel allows you to configure your data source, either by uploading JSON files or synchronizing through Speckle. Additionally, the left panel provides tools to select upstream and downstream components/nodes, trigger syncing selected UUIDs to Speckle, or fetch from Speckle.
 
 ### Notes
 
